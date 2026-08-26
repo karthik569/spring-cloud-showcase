@@ -1,0 +1,3 @@
+app:
+  greeting: "Hello from Centralized Config for Order Service!"
+  discount-percentage: 15
