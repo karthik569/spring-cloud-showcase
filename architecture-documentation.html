@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spring Cloud Microservices Showcase - Architecture & Documentation</title>
+  <!-- Mermaid.js for interactive client-side diagram rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#0f172a',
+        primaryColor: '#3b82f6',
+        primaryTextColor: '#f8fafc',
+        primaryBorderColor: '#60a5fa',
+        lineColor: '#94a3b8',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#1e293b'
+      }
+    });
+  </script>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-green: #4ade80;
+      --accent-purple: #c084fc;
+      --accent-yellow: #facc15;
+      --code-bg: #090d16;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 0;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+      padding: 3rem 2rem;
+      border-bottom: 1px solid var(--card-border);
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(to right, var(--accent-blue), var(--accent-green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.8rem;
+    }
+
+    header p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .badge-container {
+      margin-top: 1.2rem;
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .badge-java { background-color: rgba(234, 88, 12, 0.2); color: #fb923c; border-color: #ea580c; }
+    .badge-spring { background-color: rgba(34, 197, 94, 0.2); color: #4ade80; border-color: #22c55e; }
+    .badge-cloud { background-color: rgba(56, 189, 248, 0.2); color: #38bdf8; border-color: #0284c7; }
+    .badge-swagger { background-color: rgba(132, 204, 22, 0.2); color: #a3e635; border-color: #65a30d; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 1rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1rem;
+      margin-bottom: 2.5rem;
+      overflow-x: auto;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text-main);
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    .diagram-container {
+      background-color: #0b1120;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    th {
+      background-color: rgba(15, 23, 42, 0.6);
+      color: var(--accent-blue);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    tr:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    pre, code {
+      font-family: "JetBrains Mono", Consolas, Monaco, "Courier New", monospace;
+    }
+
+    code {
+      background-color: var(--code-bg);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      color: #e2e8f0;
+      font-size: 0.88rem;
+    }
+
+    pre code {
+      display: block;
+      padding: 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      background-color: var(--code-bg);
+      border: 1px solid var(--card-border);
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .service-box {
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    .service-box h4 {
+      color: var(--accent-green);
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .service-box .port {
+      background-color: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.5rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--card-border);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Spring Cloud Microservices Showcase</h1>
+    <p>Comprehensive Architecture, Sequence Flows, OpenAPI Specifications, and Operational Guide</p>
+    <div class="badge-container">
+      <span class="badge badge-java">Java 21 LTS</span>
+      <span class="badge badge-spring">Spring Boot 3.3.4</span>
+      <span class="badge badge-cloud">Spring Cloud 2023.0.3 (Leyton)</span>
+      <span class="badge badge-swagger">OpenAPI 3 / Swagger UI</span>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <nav class="nav-tabs">
+      <a href="#architecture" class="nav-link">🏛 Architecture</a>
+      <a href="#sequence" class="nav-link">⚡ Interaction Flows</a>
+      <a href="#services" class="nav-link">📦 Microservices</a>
+      <a href="#openapi" class="nav-link">📖 Swagger / OpenAPI</a>
+      <a href="#resilience" class="nav-link">🛡 Resilience & Circuit Breaker</a>
+      <a href="#logging" class="nav-link">📝 Logging & Rotation</a>
+      <a href="#testing" class="nav-link">🧪 Automated Verification</a>
+    </nav>
+
+    <!-- SECTION 1: SYSTEM ARCHITECTURE -->
+    <section id="architecture">
+      <h2 class="section-title">🏛 Microservices Architecture</h2>
+      <div class="card">
+        <p>The showcase represents a multi-module microservice topology orchestrating distributed configuration, dynamic service registration, client-side load balancing, circuit breaking, and reactive edge routing.</p>
+        
+        <div class="diagram-container">
+          <div class="mermaid">
+flowchart TD
+    Client(["🌐 Client / Browser / cURL"])
+    
+    subgraph CoreInfra ["Infrastructure Layer"]
+        ConfigServer["⚙️ Config Server<br><b>Port: 8888</b><br>Native Config Repo"]
+        EurekaServer["🔍 Eureka Server<br><b>Port: 8761</b><br>Service Registry"]
+    end
+
+    subgraph EdgeLayer ["Edge Gateway Layer"]
+        Gateway["🚀 API Gateway<br><b>Port: 8080</b><br>Spring Cloud Gateway<br>Aggregated Swagger UI"]
+    end
+
+    subgraph BusinessLayer ["Business Microservices"]
+        OrderService["🛒 Order Service<br><b>Port: 8081</b><br>OpenFeign + Resilience4j<br>@RefreshScope"]
+        InventoryService["📦 Inventory Service<br><b>Port: 8082</b><br>Stock Allocation<br>@RefreshScope"]
+    end
+
+    ConfigServer -.->|"Dynamic Config Loading"| Gateway
+    ConfigServer -.->|"Dynamic Config Loading"| OrderService
+    ConfigServer -.->|"Dynamic Config Loading"| InventoryService
+
+    OrderService <-->|"Heartbeat & Registration"| EurekaServer
+    InventoryService <-->|"Heartbeat & Registration"| EurekaServer
+    Gateway <-->|"Route Resolution (lb://)"| EurekaServer
+
+    Client ==>|"HTTP Requests (/api/*)"| Gateway
+    Gateway -->|"lb://ORDER-SERVICE"| OrderService
+    Gateway -->|"lb://INVENTORY-SERVICE"| InventoryService
+
+    OrderService ==>|"OpenFeign Client-Side RPC"| InventoryService
+
+    classDef infra fill:#1e1b4b,stroke:#6366f1,stroke-width:2px,color:#fff;
+    classDef edge fill:#0f3847,stroke:#0284c7,stroke-width:2px,color:#fff;
+    classDef business fill:#064e3b,stroke:#059669,stroke-width:2px,color:#fff;
+    classDef client fill:#312e81,stroke:#a855f7,stroke-width:2px,color:#fff;
+
+    class ConfigServer,EurekaServer infra;
+    class Gateway edge;
+    class OrderService,InventoryService business;
+    class Client client;
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: SEQUENCE FLOWS -->
+    <section id="sequence">
+      <h2 class="section-title">⚡ Sequence Flows & Inter-Service Communication</h2>
+      <div class="card">
+        <h3>1. Happy Path Order Placement Flow</h3>
+        <p>The client issues an order creation request. The API Gateway routes the call to <code>order-service</code>, which communicates synchronously with <code>inventory-service</code> via OpenFeign to verify stock before confirming.</p>
+        
+        <div class="diagram-container">
+          <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Client as 🌐 Client
+    participant GW as 🚀 API Gateway (:8080)
+    participant Eureka as 🔍 Eureka Server (:8761)
+    participant Order as 🛒 Order Service (:8081)
+    participant Inv as 📦 Inventory Service (:8082)
+
+    Client->>GW: POST /api/orders {skuCode: "IPHONE15", quantity: 2}
+    GW->>Eureka: Lookup instance for 'ORDER-SERVICE'
+    Eureka-->>GW: Return Order Service address
+    GW->>Order: Forward POST /api/orders
+    Order->>Eureka: Resolve 'INVENTORY-SERVICE' via LoadBalancer
+    Eureka-->>Order: Return Inventory Service address
+    Order->>Inv: GET /api/inventory/IPHONE15 (via OpenFeign)
+    Inv-->>Order: Return InventoryResponse {inStock: true, quantity: 25}
+    Order->>Order: Apply centralized discount & compute total
+    Order-->>GW: 201 Created {orderId: "ORD-XXX", status: "CONFIRMED"}
+    GW-->>Client: 201 Created JSON response
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2rem;">2. Circuit Breaker Fallback Execution</h3>
+        <p>When <code>inventory-service</code> is slow, down, or fails, Resilience4j intercepts the Feign exception and triggers the declarative fallback without propagating errors to the caller.</p>
+        
+        <div class="diagram-container">
+          <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Client as 🌐 Client
+    participant GW as 🚀 API Gateway (:8080)
+    participant Order as 🛒 Order Service (:8081)
+    participant Inv as 📦 Inventory Service (:8082)
+    participant Fallback as 🛡 InventoryFallback
+
+    Client->>GW: POST /api/orders {skuCode: "IPHONE15", quantity: 2}
+    GW->>Order: Forward POST /api/orders
+    Order->>Inv: GET /api/inventory/IPHONE15
+    Note over Inv: Service Unavailable or Timeout (>= 2s)
+    Inv--xOrder: Connection Refused / 500 Error / Timeout
+    Order->>Fallback: Trigger Feign Fallback checkStock("IPHONE15")
+    Fallback-->>Order: InventoryResponse {inStock: false, warehouse: "FALLBACK_CACHE"}
+    Order-->>GW: 400 Bad Request {status: "REJECTED_OUT_OF_STOCK"}
+    GW-->>Client: Graceful rejection message
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: SERVICES BREAKDOWN -->
+    <section id="services">
+      <h2 class="section-title">📦 Microservices Breakdown</h2>
+      <div class="grid-2">
+        
+        <div class="service-box">
+          <h4>Config Server <span class="port">Port 8888</span></h4>
+          <p>Centralized configuration authority. Supplies runtime configurations for order discounts and inventory warehouse zones from native classpath configuration repository.</p>
+          <ul style="margin: 0.75rem 0 0 1.25rem; font-size: 0.9rem; color: var(--text-muted);">
+            <li>Active Profile: <code>native</code></li>
+            <li>Repository path: <code>classpath:/config-repo</code></li>
+            <li>Endpoints: <code>/order-service/default</code>, <code>/inventory-service/default</code></li>
+          </ul>
+        </div>
+
+        <div class="service-box">
+          <h4>Eureka Server <span class="port">Port 8761</span></h4>
+          <p>Netflix Eureka service registry enabling autonomous client discovery, heartbeat health reporting, and zero-hardcoded-IP communication across instances.</p>
+          <ul style="margin: 0.75rem 0 0 1.25rem; font-size: 0.9rem; color: var(--text-muted);">
+            <li>Dashboard: <a href="http://localhost:8761" target="_blank">http://localhost:8761</a></li>
+            <li>Heartbeat interval: 30s</li>
+            <li>Prefer-IP: <code>true</code></li>
+          </ul>
+        </div>
+
+        <div class="service-box">
+          <h4>API Gateway <span class="port">Port 8080</span></h4>
+          <p>Reactive Netty reverse proxy with dynamic route resolution (<code>lb://</code>), global logging filters, circuit breaker fallbacks, and aggregated Swagger UI.</p>
+          <ul style="margin: 0.75rem 0 0 1.25rem; font-size: 0.9rem; color: var(--text-muted);">
+            <li>Framework: Spring Cloud Gateway (WebFlux)</li>
+            <li>Route 1: <code>/api/orders/**</code> &rarr; <code>lb://ORDER-SERVICE</code></li>
+            <li>Route 2: <code>/api/inventory/**</code> &rarr; <code>lb://INVENTORY-SERVICE</code></li>
+            <li>Swagger UI: <a href="http://localhost:8080/swagger-ui.html" target="_blank">/swagger-ui.html</a></li>
+          </ul>
+        </div>
+
+        <div class="service-box">
+          <h4>Order Service <span class="port">Port 8081</span></h4>
+          <p>Business microservice managing order transactions. Employs OpenFeign declarative HTTP client, Spring Cloud LoadBalancer, and Resilience4j circuit breakers.</p>
+          <ul style="margin: 0.75rem 0 0 1.25rem; font-size: 0.9rem; color: var(--text-muted);">
+            <li>OpenFeign: <code>InventoryClient</code> with <code>InventoryFallback</code></li>
+            <li>Dynamic Config: <code>@RefreshScope</code> for live discounts</li>
+            <li>Swagger UI: <a href="http://localhost:8081/swagger-ui.html" target="_blank">/swagger-ui.html</a></li>
+          </ul>
+        </div>
+
+        <div class="service-box">
+          <h4>Inventory Service <span class="port">Port 8082</span></h4>
+          <p>Warehouse and product stock ledger. Features real-time stock allocation checks and artificial failure simulation endpoints for testing circuit breaker scenarios.</p>
+          <ul style="margin: 0.75rem 0 0 1.25rem; font-size: 0.9rem; color: var(--text-muted);">
+            <li>Stock Store: In-memory concurrent database</li>
+            <li>Simulation: <code>/api/inventory/slow/{sku}</code> and <code>/fail/{sku}</code></li>
+            <li>Swagger UI: <a href="http://localhost:8082/swagger-ui.html" target="_blank">/swagger-ui.html</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 4: OPENAPI & SWAGGER -->
+    <section id="openapi">
+      <h2 class="section-title">📖 Unified Swagger / OpenAPI 3 Documentation</h2>
+      <div class="card">
+        <p>The system provides interactive API documentation adhering to OpenAPI 3.0. Individual microservices host their own docs, and the API Gateway aggregates them into a single, unified drop-down UI.</p>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Interactive Swagger UI</th>
+              <th>OpenAPI v3 JSON Endpoint</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>API Gateway (Aggregator)</strong></td>
+              <td><a href="http://localhost:8080/swagger-ui.html" target="_blank">http://localhost:8080/swagger-ui.html</a></td>
+              <td><code>/v3/api-docs/swagger-config</code></td>
+              <td>Centralized Swagger portal displaying both services via drop-down selector</td>
+            </tr>
+            <tr>
+              <td><strong>Order Service</strong></td>
+              <td><a href="http://localhost:8081/swagger-ui.html" target="_blank">http://localhost:8081/swagger-ui.html</a></td>
+              <td><code>/v3/api-docs</code></td>
+              <td>Order placement, order history, and circuit breaker test endpoints</td>
+            </tr>
+            <tr>
+              <td><strong>Inventory Service</strong></td>
+              <td><a href="http://localhost:8082/swagger-ui.html" target="_blank">http://localhost:8082/swagger-ui.html</a></td>
+              <td><code>/v3/api-docs</code></td>
+              <td>Stock inspection, warehouse allocations, delay/failure simulations</td>
+            </tr>
+            <tr>
+              <td><strong>Routed via Gateway</strong></td>
+              <td><a href="http://localhost:8080/swagger-ui.html" target="_blank">http://localhost:8080/swagger-ui.html</a></td>
+              <td><code>/order-service/v3/api-docs</code><br><code>/inventory-service/v3/api-docs</code></td>
+              <td>Direct gateway routes delegating to backend documentation endpoints</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 5: RESILIENCE4J -->
+    <section id="resilience">
+      <h2 class="section-title">🛡 Resilience & Circuit Breaker Architecture</h2>
+      <div class="card">
+        <p>Resilience4j monitors call health between microservices. If failures exceed the configured threshold, the circuit transitions into an <code>OPEN</code> state, intercepting further network traffic immediately.</p>
+        
+        <div class="diagram-container">
+          <div class="mermaid">
+stateDiagram-v2
+    [*] --> CLOSED: Initial Healthy State
+    CLOSED --> OPEN: Failure Rate >= 50% (Window: 5 calls)
+    OPEN --> HALF_OPEN: Wait Duration expires (5s)
+    HALF_OPEN --> CLOSED: Permitted calls succeed
+    HALF_OPEN --> OPEN: Any failure during trial
+          </div>
+        </div>
+
+        <h4 style="margin-top: 1.5rem; color: var(--accent-blue);">Configured Parameters:</h4>
+        <ul style="margin: 0.5rem 0 0 1.5rem; color: var(--text-muted);">
+          <li><code>sliding-window-size</code>: 5 calls</li>
+          <li><code>minimum-number-of-calls</code>: 3 calls</li>
+          <li><code>failure-rate-threshold</code>: 50%</li>
+          <li><code>wait-duration-in-open-state</code>: 5 seconds</li>
+          <li><code>timelimiter.timeout-duration</code>: 2 seconds</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 6: LOGGING & ROTATION -->
+    <section id="logging">
+      <h2 class="section-title">📝 File Logging & Rolling Rotation</h2>
+      <div class="card">
+        <p>Each microservice includes an autonomous file appender writing structured logs with standardized timestamps, threads, levels, and logger categories.</p>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>Microservice</th>
+              <th>Log Destination</th>
+              <th>Rolling Strategy</th>
+              <th>Retention & Cap</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>order-service</code></td>
+              <td><code>logs/order-service.log</code></td>
+              <td>Size & Time Based</td>
+              <td>10MB/file, 7 days history, 100MB cap</td>
+            </tr>
+            <tr>
+              <td><code>inventory-service</code></td>
+              <td><code>logs/inventory-service.log</code></td>
+              <td>Size & Time Based</td>
+              <td>10MB/file, 7 days history, 100MB cap</td>
+            </tr>
+            <tr>
+              <td><code>api-gateway</code></td>
+              <td><code>logs/api-gateway.log</code></td>
+              <td>Size & Time Based</td>
+              <td>10MB/file, 7 days history, 100MB cap</td>
+            </tr>
+            <tr>
+              <td><code>eureka-server</code></td>
+              <td><code>logs/eureka-server.log</code></td>
+              <td>Size & Time Based</td>
+              <td>10MB/file, 7 days history, 100MB cap</td>
+            </tr>
+            <tr>
+              <td><code>config-server</code></td>
+              <td><code>logs/config-server.log</code></td>
+              <td>Size & Time Based</td>
+              <td>10MB/file, 7 days history, 100MB cap</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 style="margin-top: 1.25rem; color: var(--accent-blue);">Standard Log Pattern:</h4>
+        <pre><code>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</code></pre>
+      </div>
+    </section>
+
+    <!-- SECTION 7: TESTING SUITE -->
+    <section id="testing">
+      <h2 class="section-title">🧪 Automated Test Suite (<code>test-app.sh</code>)</h2>
+      <div class="card">
+        <p>A unified test execution script verifies unit logic, integration tests, OpenAPI specs, and file logging outputs:</p>
+        
+        <pre><code># Run full automated test suite (Maven + OpenAPI + File Logging)
+bash test-app.sh --all
+
+# Run Swagger / OpenAPI verification tests
+bash test-app.sh --swagger
+
+# Run file logging validation tests
+bash test-app.sh --logging
+
+# Probe live running microservices and Swagger endpoints
+bash test-app.sh --live</code></pre>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <p>Spring Cloud Microservices Showcase &copy; 2026. Built with Spring Boot 3.3.4 &amp; Spring Cloud 2023.0.3.</p>
+  </footer>
+
+</body>
+</html>

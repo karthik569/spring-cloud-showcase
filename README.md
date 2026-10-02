@@ -2,6 +2,8 @@
 
 A comprehensive, production-grade Spring Cloud microservices architecture built with **Java 21**, **Spring Boot 3.3**, and **Spring Cloud 2023.0.3 (Leyton)**.
 
+> 📊 **Interactive HTML Architecture & Sequence Guide**: Open [`architecture-documentation.html`](file://architecture-documentation.html) in your browser for rich Mermaid diagrams, sequence flows, OpenAPI endpoints, and resilience state machines.
+
 ---
 
 ## 🏛 Architecture Overview
