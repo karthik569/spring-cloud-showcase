@@ -1,9 +1,20 @@
 package com.example.order.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Inventory stock details returned from Inventory Client")
 public class InventoryResponse {
+
+    @Schema(description = "Stock Keeping Unit code", example = "IPHONE15")
     private String skuCode;
+
+    @Schema(description = "Stock availability flag", example = "true")
     private boolean inStock;
+
+    @Schema(description = "Quantity available", example = "25")
     private int quantity;
+
+    @Schema(description = "Warehouse location", example = "San Francisco Hub")
     private String warehouse;
 
     public InventoryResponse() {}

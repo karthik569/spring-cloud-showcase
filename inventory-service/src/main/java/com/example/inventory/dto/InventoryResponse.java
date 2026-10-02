@@ -1,9 +1,20 @@
 package com.example.inventory.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Details about product stock availability and fulfillment warehouse")
 public class InventoryResponse {
+
+    @Schema(description = "Stock Keeping Unit code", example = "IPHONE15", requiredMode = Schema.RequiredMode.REQUIRED)
     private String skuCode;
+
+    @Schema(description = "Indicates whether the SKU is currently in stock", example = "true", requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean inStock;
+
+    @Schema(description = "Current stock level quantity available in warehouse", example = "25", requiredMode = Schema.RequiredMode.REQUIRED)
     private int quantity;
+
+    @Schema(description = "Name or location identifier of the fulfillment warehouse", example = "San Francisco Distribution Center", requiredMode = Schema.RequiredMode.REQUIRED)
     private String warehouse;
 
     public InventoryResponse() {}

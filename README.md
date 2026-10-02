@@ -115,3 +115,60 @@ curl -i -X POST http://localhost:8080/api/orders \
   -H "Content-Type: application/json" \
   -d '{"skuCode":"IPHONE15","quantity":2,"price":1000.0}'
 ```
+
+---
+
+## 📖 Swagger / OpenAPI 3 Documentation
+
+Both microservices and the API Gateway expose interactive Swagger UI and OpenAPI 3 specifications (`springdoc-openapi-starter-webmvc-ui` and `springdoc-openapi-starter-webflux-ui`):
+
+| Component | Swagger UI Endpoint | OpenAPI v3 JSON Specification |
+|:----------|:-------------------|:------------------------------|
+| **API Gateway (Aggregator)** | [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) | `http://localhost:8080/v3/api-docs/swagger-config` |
+| **Order Service** | [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html) | `http://localhost:8081/v3/api-docs` |
+| **Inventory Service** | [http://localhost:8082/swagger-ui.html](http://localhost:8082/swagger-ui.html) | `http://localhost:8082/v3/api-docs` |
+| **Via API Gateway** | [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) | `http://localhost:8080/order-service/v3/api-docs`<br>`http://localhost:8080/inventory-service/v3/api-docs` |
+
+
+---
+
+## 🧪 Automated Test App (`test-app.sh`)
+
+A test runner script `test-app.sh` is provided in the repository root to verify all microservices, unit tests, integration tests, and Swagger API specifications:
+
+```bash
+# Run comprehensive test suite (Maven unit/integration + Swagger validation)
+bash test-app.sh --all
+
+# Run Swagger / OpenAPI specification tests only
+bash test-app.sh --swagger
+
+# Run file logging verification tests only
+bash test-app.sh --logging
+
+# Run unit and integration tests only
+bash test-app.sh --unit
+
+# Probe live running microservices and Swagger endpoints over HTTP
+bash test-app.sh --live
+```
+
+---
+
+## 📝 Logging & File Appender Configuration
+
+All microservices are equipped with file-based rolling log appenders:
+
+- **Order Service**: `logs/order-service.log`
+- **Inventory Service**: `logs/inventory-service.log`
+- **API Gateway**: `logs/api-gateway.log`
+- **Eureka Server**: `logs/eureka-server.log`
+- **Config Server**: `logs/config-server.log`
+
+### Rolling Policy & Formatting
+- **File Rotation Policy**: Max 10MB per log file, 7 days history retention, up to 100MB total size cap.
+- **Log Pattern**: `%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n`
+- **Log Levels**: Module controllers and clients configured to `DEBUG`, with web and gateway frameworks set to `INFO`.
+- **Git Ignored**: All `logs/` and `*.log` files are automatically excluded by [`.gitignore`](file:///.gitignore).
+
+

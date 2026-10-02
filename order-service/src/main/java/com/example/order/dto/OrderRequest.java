@@ -1,8 +1,17 @@
 package com.example.order.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Request payload for placing a new order")
 public class OrderRequest {
+
+    @Schema(description = "Stock Keeping Unit code of the product to order", example = "IPHONE15", requiredMode = Schema.RequiredMode.REQUIRED)
     private String skuCode;
+
+    @Schema(description = "Quantity of items to purchase", example = "2", requiredMode = Schema.RequiredMode.REQUIRED)
     private int quantity;
+
+    @Schema(description = "Base unit price of the item before discounts", example = "999.99", requiredMode = Schema.RequiredMode.REQUIRED)
     private double price;
 
     public OrderRequest() {}

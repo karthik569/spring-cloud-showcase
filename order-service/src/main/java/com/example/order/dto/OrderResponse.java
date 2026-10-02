@@ -1,16 +1,37 @@
 package com.example.order.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 
+@Schema(description = "Response payload representing an order record and its fulfillment status")
 public class OrderResponse {
+
+    @Schema(description = "Unique alphanumeric order identifier", example = "ORD-A1B2C3D4")
     private String orderId;
+
+    @Schema(description = "Stock Keeping Unit code", example = "IPHONE15")
     private String skuCode;
+
+    @Schema(description = "Quantity ordered", example = "2")
     private int quantity;
+
+    @Schema(description = "Total price calculated after discount", example = "1699.98")
     private double totalPrice;
+
+    @Schema(description = "Discount amount deducted via centralized configuration", example = "300.00")
     private double discountApplied;
+
+    @Schema(description = "Status of the order", example = "CONFIRMED", allowableValues = {"CONFIRMED", "REJECTED_OUT_OF_STOCK", "FAILED"})
     private String status;
+
+    @Schema(description = "Fulfillment warehouse identifier", example = "San Francisco Hub")
     private String warehouse;
+
+    @Schema(description = "Descriptive note or reason code for the order state", example = "Order placed successfully with 15% centralized discount applied")
     private String note;
+
+    @Schema(description = "Timestamp when order was processed (ISO-8601 UTC)", example = "2026-10-02T14:30:00Z")
     private String timestamp;
 
     public OrderResponse() {}

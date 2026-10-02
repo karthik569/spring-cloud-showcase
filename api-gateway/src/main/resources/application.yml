@@ -29,6 +29,20 @@ spring:
           filters:
             - AddResponseHeader=X-Gateway-Route, inventory-service-route
 
+        - id: order-service-docs
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/v3/api-docs/**
+          filters:
+            - RewritePath=/order-service/(?<remaining>.*), /$\{remaining}
+
+        - id: inventory-service-docs
+          uri: lb://INVENTORY-SERVICE
+          predicates:
+            - Path=/inventory-service/v3/api-docs/**
+          filters:
+            - RewritePath=/inventory-service/(?<remaining>.*), /$\{remaining}
+
 eureka:
   client:
     service-url:
@@ -53,3 +67,34 @@ management:
   endpoint:
     gateway:
       enabled: true
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls:
+      - name: Order Service
+        url: /order-service/v3/api-docs
+      - name: Inventory Service
+        url: /inventory-service/v3/api-docs
+
+logging:
+  file:
+    name: logs/api-gateway.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 7
+      total-size-cap: 100MB
+  level:
+    root: INFO
+    com.example.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO
+    reactor.netty: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+
