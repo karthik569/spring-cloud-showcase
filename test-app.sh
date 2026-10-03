@@ -60,6 +60,35 @@ run_swagger_tests() {
     log_success "API Gateway Swagger UI Aggregation verified successfully!"
 }
 
+run_observability_tests() {
+    print_header "Verifying Distributed Tracing & Observability Suites"
+    log_info "Testing Observability in API Gateway..."
+    mvn test -pl api-gateway -Dtest=GatewayObservabilityTest
+    log_success "API Gateway Observability (Prometheus, Tracing & Context Propagation) verified!"
+
+    log_info "Testing Observability in Inventory Service..."
+    mvn test -pl inventory-service -Dtest=InventoryObservabilityTest
+    log_success "Inventory Service Observability (Prometheus, Metrics & Tracing) verified!"
+
+    log_info "Testing Observability in Order Service..."
+    mvn test -pl order-service -Dtest=OrderObservabilityTest
+    log_success "Order Service Observability (Prometheus, Feign Tracing & Correlation) verified!"
+}
+
+run_prometheus_tests() {
+    print_header "Verifying Prometheus Metrics Scraping Endpoints"
+    log_info "Testing Prometheus endpoints across services..."
+    mvn test -Dtest="*ObservabilityTest#testPrometheus*"
+    log_success "Prometheus scraping endpoints verified successfully across all services!"
+}
+
+run_tracing_tests() {
+    print_header "Verifying Distributed Tracing & Propagation"
+    log_info "Testing Tracing beans and propagation across services..."
+    mvn test -Dtest="*ObservabilityTest#test*Trace*,*ObservabilityTest#test*B3*,*ObservabilityTest#test*W3C*"
+    log_success "Distributed tracing propagation verified successfully across all services!"
+}
+
 run_logging_tests() {
     print_header "Verifying File Logging Mechanisms & Log Outputs"
     log_info "Running OrderLoggingTest to verify file logging..."
@@ -133,12 +162,15 @@ show_help() {
     echo "Usage: ./test-app.sh [OPTION]"
     echo ""
     echo "Options:"
-    echo "  --all        (Default) Run complete test suite (Maven tests + OpenAPI + Logging)"
-    echo "  --logging    Run file logging verification tests only"
-    echo "  --swagger    Run OpenAPI and Swagger validation tests only"
-    echo "  --unit       Run unit and integration test suite only"
-    echo "  --live       Probe live running services and Swagger endpoints over HTTP"
-    echo "  --help       Show this help message"
+    echo "  --all            (Default) Run complete test suite (Maven tests + OpenAPI + Logging + Observability)"
+    echo "  --observability  Run distributed tracing & observability test suites"
+    echo "  --prometheus     Run Prometheus metrics scraping validation tests"
+    echo "  --tracing        Run distributed tracing propagation validation tests"
+    echo "  --logging        Run file logging verification tests only"
+    echo "  --swagger        Run OpenAPI and Swagger validation tests only"
+    echo "  --unit           Run unit and integration test suite only"
+    echo "  --live           Probe live running services and Swagger endpoints over HTTP"
+    echo "  --help           Show this help message"
 }
 
 # Main command dispatcher
@@ -148,9 +180,19 @@ case "$ACTION" in
     --all)
         print_header "Spring Cloud Showcase - Comprehensive Test Suite"
         run_maven_tests
+        run_observability_tests
         run_logging_tests
         echo ""
         log_success "All test suites completed successfully!"
+        ;;
+    --observability)
+        run_observability_tests
+        ;;
+    --prometheus)
+        run_prometheus_tests
+        ;;
+    --tracing)
+        run_tracing_tests
         ;;
     --logging)
         run_logging_tests

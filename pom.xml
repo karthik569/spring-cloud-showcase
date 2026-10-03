@@ -23,6 +23,7 @@
         <java.version>21</java.version>
         <spring-cloud.version>2023.0.3</spring-cloud.version>
         <springdoc.version>2.6.0</springdoc.version>
+        <feign-micrometer.version>13.3</feign-micrometer.version>
     </properties>
 
     <modules>
@@ -41,6 +42,11 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-micrometer</artifactId>
+                <version>${feign-micrometer.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springdoc</groupId>
